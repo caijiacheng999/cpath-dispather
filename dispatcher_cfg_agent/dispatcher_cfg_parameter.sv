@@ -3,6 +3,9 @@
 
 `define DISP_CFG_CLST_N      4
 `define DISP_CFG_CU_N        4
+`define DISP_CFG_SUBC_N      2
+`define DISP_CFG_CACHE_N     4
+`define DISP_CFG_CU_SUBC_N   (`DISP_CFG_CU_N*`DISP_CFG_SUBC_N)
 
 `define DISP_CFG_CFG_ADDR_W  32
 `define DISP_CFG_CFG_DATA_W  32
@@ -12,5 +15,14 @@
 `define DISP_CFG_CORE_ADDR_W 12
 `define DISP_CFG_CORE_DATA_W 32
 `define DISP_CFG_CORE_STRB_W (`DISP_CFG_CORE_DATA_W/8)
+
+`define DISP_CFG_RSP_DATA_W  32
+`define DISP_CFG_RSP_STRB_W  (`DISP_CFG_RSP_DATA_W/8)
+`define DISP_CFG_RSP_KEEP_W  (`DISP_CFG_RSP_DATA_W/8)
+`define DISP_CFG_RSP_ID_W    4
+`define DISP_CFG_RSP_DEST_W  6
+`define DISP_CFG_RSP_USER_W  6
+
+`define DISP_CFG_CLST_QBID_W 32
 
 `endif

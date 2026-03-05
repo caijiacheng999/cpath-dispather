@@ -55,8 +55,8 @@ function void dispatcher_cfg_scb::write_in(dispatcher_cfg_transaction tr);
     in_cnt++;
 
     `uvm_info(get_full_name(),
-              $sformatf("SCB-IN evt=%0d clst=%0d cu=%0d ts=%0t in_cnt=%0d",
-                        tr.evt_kind, tr.clst_id, tr.cu_id, tr.ts, in_cnt),
+              $sformatf("SCB-IN evt=%0d clst=%0d cu=%0d idx=%0d qaddr=0x%0h qdata=0x%0h ts=%0t in_cnt=%0d",
+                        tr.evt_kind, tr.clst_id, tr.cu_id, tr.idx_id, tr.reg_qaddr, tr.reg_qwdata, tr.ts, in_cnt),
               UVM_LOW)
 endfunction : write_in
 
@@ -68,8 +68,8 @@ function void dispatcher_cfg_scb::write_out(dispatcher_cfg_transaction tr);
     out_cnt++;
 
     `uvm_info(get_full_name(),
-              $sformatf("SCB-OUT evt=%0d clst=%0d cu=%0d qaddr=0x%0h qwdata=0x%0h ts=%0t out_cnt=%0d",
-                        tr.evt_kind, tr.clst_id, tr.cu_id, tr.core_qaddr, tr.core_qwdata, tr.ts, out_cnt),
+              $sformatf("SCB-OUT evt=%0d clst=%0d cu=%0d idx=%0d qaddr=0x%0h qdata=0x%0h ts=%0t out_cnt=%0d",
+                        tr.evt_kind, tr.clst_id, tr.cu_id, tr.idx_id, tr.reg_qaddr, tr.reg_qwdata, tr.ts, out_cnt),
               UVM_LOW)
 endfunction : write_out
 

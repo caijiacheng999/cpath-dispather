@@ -3,6 +3,13 @@
 
 interface dispatcher_cfg_interface(input clk, input rst_n);
 
+
+    // ------------------------------
+    // Kernel packet boundary signals
+    // ------------------------------
+    logic kernel_ack;
+    logic kernel_rls;
+
     // ------------------------------
     // Dispatcher cfg_if (AxiLiteIf.Slave)
     // ------------------------------
@@ -266,6 +273,9 @@ interface dispatcher_cfg_interface(input clk, input rst_n);
         input int_in_cache;
         input int_in_smmu;
         input int_out_oaiss;
+
+        input kernel_ack;
+        input kernel_rls;
     endclocking : mon_cb
 
 endinterface : dispatcher_cfg_interface

@@ -13,6 +13,8 @@ class dispatcher_cfg_monitor extends uvm_monitor;
     bit [`DISP_CFG_CLST_N-1:0][2:0]                         prev_int_in_cache;
     bit [`DISP_CFG_CLST_N-1:0]                              prev_int_in_smmu;
     bit [`DISP_CFG_CLST_N-1:0][4:0]                         prev_int_out_oaiss;
+    bit                                                      prev_kernel_ack;
+    bit                                                      prev_kernel_rls;
 
     integer cl_idx;
     integer cu_idx;
@@ -34,6 +36,7 @@ class dispatcher_cfg_monitor extends uvm_monitor;
     extern task sample_clst_cfg_if();
     extern task sample_cpt2disp_if();
     extern task sample_interrupts();
+    extern task sample_kernel_boundary();
 
     extern function void send_in_tr(dispatcher_cfg_transaction tr);
     extern function void send_out_tr(dispatcher_cfg_transaction tr);
@@ -68,6 +71,8 @@ task dispatcher_cfg_monitor::run_phase(uvm_phase phase);
     prev_int_in_cache = m_vif.mon_cb.int_in_cache;
     prev_int_in_smmu  = m_vif.mon_cb.int_in_smmu;
     prev_int_out_oaiss= m_vif.mon_cb.int_out_oaiss;
+    prev_kernel_ack  = m_vif.mon_cb.kernel_ack;
+    prev_kernel_rls  = m_vif.mon_cb.kernel_rls;
 
     forever begin
         @m_vif.mon_cb;
@@ -84,10 +89,16 @@ task dispatcher_cfg_monitor::run_phase(uvm_phase phase);
 endtask : run_phase
 
 function void dispatcher_cfg_monitor::send_in_tr(dispatcher_cfg_transaction tr);
+    `uvm_info(get_full_name(),
+              $sformatf("MON-IN evt=%0d clst=%0d cu=%0d idx=%0d ts=%0t", tr.evt_kind, tr.clst_id, tr.cu_id, tr.idx_id, tr.ts),
+              UVM_LOW)
     in_ap.write(tr);
 endfunction : send_in_tr
 
 function void dispatcher_cfg_monitor::send_out_tr(dispatcher_cfg_transaction tr);
+    `uvm_info(get_full_name(),
+              $sformatf("MON-OUT evt=%0d clst=%0d cu=%0d idx=%0d ts=%0t", tr.evt_kind, tr.clst_id, tr.cu_id, tr.idx_id, tr.ts),
+              UVM_LOW)
     out_ap.write(tr);
 endfunction : send_out_tr
 
@@ -438,5 +449,30 @@ task dispatcher_cfg_monitor::sample_interrupts();
     prev_int_in_smmu   = m_vif.mon_cb.int_in_smmu;
     prev_int_out_oaiss = m_vif.mon_cb.int_out_oaiss;
 endtask : sample_interrupts
+
+task dispatcher_cfg_monitor::sample_kernel_boundary();
+    dispatcher_cfg_transaction tr;
+
+    if (m_vif.mon_cb.kernel_ack != prev_kernel_ack) begin
+        tr = dispatcher_cfg_transaction::type_id::create("tr_kernel_ack", this);
+        tr.evt_kind   = DISP_EVT_KNL_ACK;
+        tr.accepted   = 1'b1;
+        tr.ts         = $time;
+        tr.kernel_ack = m_vif.mon_cb.kernel_ack;
+        send_out_tr(tr);
+    end
+
+    if (m_vif.mon_cb.kernel_rls != prev_kernel_rls) begin
+        tr = dispatcher_cfg_transaction::type_id::create("tr_kernel_rls", this);
+        tr.evt_kind   = DISP_EVT_KNL_RLS;
+        tr.accepted   = 1'b1;
+        tr.ts         = $time;
+        tr.kernel_rls = m_vif.mon_cb.kernel_rls;
+        send_out_tr(tr);
+    end
+
+    prev_kernel_ack = m_vif.mon_cb.kernel_ack;
+    prev_kernel_rls = m_vif.mon_cb.kernel_rls;
+endtask : sample_kernel_boundary
 
 `endif

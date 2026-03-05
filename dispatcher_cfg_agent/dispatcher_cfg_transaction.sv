@@ -24,7 +24,9 @@ typedef enum int {
     DISP_EVT_INT_STCU    = 19,
     DISP_EVT_INT_CACHE   = 20,
     DISP_EVT_INT_SMMU    = 21,
-    DISP_EVT_INT_OAISS   = 22
+    DISP_EVT_INT_OAISS   = 22,
+    DISP_EVT_KNL_ACK     = 23,
+    DISP_EVT_KNL_RLS     = 24
 } dispatcher_cfg_evt_e;
 
 class dispatcher_cfg_transaction extends uvm_sequence_item;
@@ -72,6 +74,9 @@ class dispatcher_cfg_transaction extends uvm_sequence_item;
     bit       smmu_int_data;
     bit [4:0] oaiss_int_data;
 
+    bit       kernel_ack;
+    bit       kernel_rls;
+
     `uvm_object_utils_begin(dispatcher_cfg_transaction)
         `uvm_field_enum(dispatcher_cfg_evt_e, evt_kind, UVM_ALL_ON)
         `uvm_field_int(clst_id,      UVM_ALL_ON)
@@ -106,6 +111,8 @@ class dispatcher_cfg_transaction extends uvm_sequence_item;
         `uvm_field_int(cache_int_data,UVM_ALL_ON)
         `uvm_field_int(smmu_int_data,UVM_ALL_ON)
         `uvm_field_int(oaiss_int_data,UVM_ALL_ON)
+        `uvm_field_int(kernel_ack,   UVM_ALL_ON)
+        `uvm_field_int(kernel_rls,   UVM_ALL_ON)
     `uvm_object_utils_end
 
     extern function new(string name = "dispatcher_cfg_transaction");
@@ -148,6 +155,8 @@ function dispatcher_cfg_transaction::new(string name = "dispatcher_cfg_transacti
     cache_int_data= '0;
     smmu_int_data = '0;
     oaiss_int_data= '0;
+    kernel_ack    = '0;
+    kernel_rls    = '0;
 endfunction : new
 
 `endif
